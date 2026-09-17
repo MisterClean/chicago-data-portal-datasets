@@ -1,0 +1,28 @@
+[Unit]
+Description=Install latest successful Chicago data bot GitHub release
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=chicago-data-deploy
+Group=chicago-data-deploy
+ExecStart=/usr/bin/python3 /usr/local/libexec/chicago-data-bot-update
+StateDirectory=chicago-data-deploy
+ReadWritePaths=/opt/chicago-data-bot
+Environment=PYTHONDONTWRITEBYTECODE=1
+TimeoutStartSec=5min
+MemoryMax=64M
+MemorySwapMax=16M
+CPUQuota=25%
+TasksMax=16
+Nice=15
+IOSchedulingClass=idle
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+UMask=0022

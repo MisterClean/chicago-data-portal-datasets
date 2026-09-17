@@ -1,0 +1,66 @@
+name: Test and release
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: python3 -m unittest discover -s deploy -p "test_*.py"
+      - run: cargo fmt --check
+      - run: cargo test --locked
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - run: cargo build --release --locked
+      - name: Package Linux executable
+        run: |
+          mkdir dist
+          cp target/release/chicago-data-bot dist/chicago-data-bot-linux-amd64
+          cd dist
+          sha256sum chicago-data-bot-linux-amd64 > SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-amd64
+          path: dist/*
+          retention-days: 7
+  release:
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-amd64
+          path: dist
+      - name: Publish successful main build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          head=$(gh api "repos/$GH_REPO/commits/main" --jq .sha)
+          if [ "$head" != "$GITHUB_SHA" ]; then
+            echo "A newer main commit exists; skipping promotion."
+            exit 0
+          fi
+          tag="build-$GITHUB_SHA"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "This immutable build release already exists."
+            exit 0
+          fi
+          gh release create "$tag" dist/* --target "$GITHUB_SHA" --latest \
+            --title "Production build ${GITHUB_SHA:0:12}" \
+            --notes "Tested Linux amd64 build from main commit $GITHUB_SHA. Lightsail checks for new successful releases every 15 minutes."

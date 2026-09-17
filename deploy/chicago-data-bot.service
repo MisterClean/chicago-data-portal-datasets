@@ -1,0 +1,29 @@
+[Unit]
+Description=Announce new Chicago Data Portal datasets
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/opt/chicago-data-bot/current/chicago-data-bot
+
+[Service]
+Type=oneshot
+User=chicago-data-bot
+Group=chicago-data-bot
+StateDirectory=chicago-data-bot
+WorkingDirectory=/var/lib/chicago-data-bot
+EnvironmentFile=/etc/chicago-data-bot/.env
+ExecStart=/opt/chicago-data-bot/current/chicago-data-bot --state /var/lib/chicago-data-bot/catalog.sqlite run --publish --max-posts 5
+TimeoutStartSec=15min
+MemoryMax=96M
+MemorySwapMax=32M
+CPUQuota=25%
+TasksMax=32
+Nice=10
+IOSchedulingClass=idle
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+UMask=0077

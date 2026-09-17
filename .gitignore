@@ -1,0 +1,10 @@
+/target/
+/state/
+/preview/
+.env
+.env.*
+!.env.example
+*.sqlite*
+*.lockfile
+__pycache__/
+*.pyc
