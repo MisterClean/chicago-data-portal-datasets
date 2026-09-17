@@ -28,7 +28,7 @@ Runtime limits: 96 MiB RAM, 32 MiB swap, 25% CPU, 32 tasks; lower scheduling pri
 
 Push to `main` → tests/format/lint → release build on Ubuntu 24.04 → immutable `build-FULL_COMMIT_SHA` release with binary + checksum → host downloads, verifies, smoke-tests `--version`, then atomically switches `current`. The publishing job checks that its commit is still the head of main before promotion. Fork PRs run checks with read-only permissions and cannot publish. Failed CI leaves the current release installed.
 
-Keep release assets immutable. Use a new main commit for fixes. A rerun of an already released SHA does not overwrite its assets. Workflow and unit configuration changes are reviewed/applied separately: the pull updater intentionally updates only the executable, not privileged systemd units or its own script.
+Keep release assets immutable. Use a new main commit for fixes. A rerun of an already released SHA does not overwrite its assets. Workflow and unit configuration changes are reviewed/applied separately: the pull updater intentionally updates only the executable, not privileged systemd units or the updater executable.
 
 ## Inspect and run
 
@@ -37,7 +37,7 @@ systemctl list-timers 'chicago-data-bot*'
 systemctl status chicago-data-bot.service chicago-data-bot-deploy.service
 journalctl -u chicago-data-bot.service -u chicago-data-bot-deploy.service --since today
 readlink -f /opt/chicago-data-bot/current
-sudo -u chicago-data-bot /opt/chicago-data-bot/current/chicago-data-bot --state /var/lib/chicago-data-bot/catalog.sqlite status
+sudo -u chicago-data-bot sh -c 'cd /var/lib/chicago-data-bot && exec /opt/chicago-data-bot/current/chicago-data-bot --state /var/lib/chicago-data-bot/catalog.sqlite status'
 sudo systemctl start chicago-data-bot-deploy.service
 sudo systemctl start chicago-data-bot.service
 ```

@@ -73,7 +73,7 @@ See the official [posting guide](https://docs.bsky.app/docs/tutorials/creating-a
 
 See [deploy/README.md](deploy/README.md) for the Lightsail installation, schedules, limits, updates, and rollback.
 
-GitHub Actions runs Rust tests, formatting, Clippy and deployment-script checks on pull requests. Successful current `main` builds publish immutable Linux amd64 GitHub releases with SHA-256 checksums. Lightsail polls for the latest successful release every 15 minutes and atomically switches to its prebuilt executable. Failed CI never publishes a release. No Rust compiler, GitHub token, or inbound CI SSH connection is required on the host.
+GitHub Actions runs Rust tests, formatting, Clippy and Rust updater checks on pull requests. Successful current `main` builds publish immutable Linux amd64 GitHub releases with SHA-256 checksums. Lightsail polls for the latest successful release every 15 minutes and atomically switches to its prebuilt executable. Failed CI never publishes a release. No Rust compiler, GitHub token, or inbound CI SSH connection is required on the host.
 
 The bot checks for new datasets at **08:00, 14:00, and 18:00 America/Chicago, Monday–Friday**, with up to five minutes of jitter. Missed runs are not replayed overnight; the next business-hours scan catches up. SQLite IDs and pending posts persist across every binary deployment.
 
