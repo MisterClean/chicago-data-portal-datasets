@@ -7,10 +7,9 @@ After=network-online.target
 Type=oneshot
 User=chicago-data-deploy
 Group=chicago-data-deploy
-ExecStart=/usr/bin/python3 /usr/local/libexec/chicago-data-bot-update
+ExecStart=/usr/local/libexec/chicago-data-bot-update
 StateDirectory=chicago-data-deploy
 ReadWritePaths=/opt/chicago-data-bot
-Environment=PYTHONDONTWRITEBYTECODE=1
 TimeoutStartSec=5min
 MemoryMax=64M
 MemorySwapMax=16M

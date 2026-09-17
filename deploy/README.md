@@ -11,7 +11,7 @@ Ubuntu 24.04 amd64. The bot runs directly as a small Rust executable, alongside 
 | `/opt/chicago-data-bot/releases/build-COMMIT/` | Checked Linux executables; owned by `chicago-data-deploy` |
 | `/opt/chicago-data-bot/current` | Atomically selected active release |
 | `/opt/chicago-data-bot/previous` | Previous release, retained for rollback |
-| `/usr/local/libexec/chicago-data-bot-update` | Root-owned standard-library Python updater |
+| `/usr/local/libexec/chicago-data-bot-update` | Root-owned Rust updater |
 | `/var/lib/chicago-data-deploy/` | Updater lock/state, isolated from bot data and credentials |
 
 The runtime user can write only its state directory. The deployment user can update only this bot's release directories and has no access to the app password. No GitHub credentials or SSH keys are needed for pull deployment from the public repository. Checksums detect corruption; authenticity depends on HTTPS and control of the GitHub repository/release workflow.
@@ -63,6 +63,6 @@ Verify `previous` exists before these commands. After a fixed release is availab
 
 ## Fresh host bootstrap
 
-Create system users `chicago-data-bot` and `chicago-data-deploy` without interactive login; prepare the directories above with matching ownership. Install the `.service` and `.timer` files in `/etc/systemd/system`, and `update_release.py` as `/usr/local/libexec/chicago-data-bot-update`. Install `.env` separately with mode 600; never transfer it via GitHub.
+Create system users `chicago-data-bot` and `chicago-data-deploy` without interactive login; prepare the directories above with matching ownership. Install the `.service` and `.timer` files in `/etc/systemd/system`, and the verified `chicago-data-bot-updater-linux-amd64` release executable as `/usr/local/libexec/chicago-data-bot-update`. Install `.env` separately with mode 600; never transfer it via GitHub.
 
 Run `systemctl daemon-reload`, start the deploy service, and initialize the database once as `chicago-data-bot` using `current/chicago-data-bot --state /var/lib/chicago-data-bot/catalog.sqlite init`. Then enable both timers. To preserve detection continuity when moving hosts, transfer the existing SQLite database using its backup API instead of taking a fresh baseline. Do not copy a live database without accounting for its WAL file.
