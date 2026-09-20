@@ -1,0 +1,24 @@
+[Unit]
+Description=Chicago data bot backup (scheduled by Petit)
+
+[Service]
+Type=oneshot
+User=chicago-data-bot
+Group=chicago-data-bot
+WorkingDirectory=/var/lib/chicago-data-bot
+ExecStart=/opt/chicago-data-bot/current/chicago-data-bot --state /var/lib/chicago-data-bot/catalog.sqlite backup /var/lib/chicago-data-bot/backups
+TimeoutStartSec=180
+MemoryMax=48M
+MemorySwapMax=16M
+CPUQuota=25%
+TasksMax=16
+Nice=10
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+ReadWritePaths=/var/lib/chicago-data-bot
+UMask=0077

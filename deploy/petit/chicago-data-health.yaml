@@ -1,0 +1,18 @@
+id: chicago_data_health
+name: chicago-data-health
+enabled: true
+schedule:
+  cron: "0 48 * * * *"
+  timezone: UTC
+max_concurrency: 1
+tasks:
+  - id: execute
+    type: command
+    command: /usr/bin/systemctl
+    args: [start, --wait, chicago-data-bot-health.service]
+    working_dir: /tmp
+    timeout_secs: 90
+    retry:
+      max_attempts: 0
+      delay_secs: 0
+      condition: never

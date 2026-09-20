@@ -84,3 +84,9 @@ The bot checks for new datasets at **08:00, 14:00, and 18:00 America/Chicago, Mo
 ```
 
 Between runs the bot uses no resident memory. Peak memory includes one metadata response, font rasterizers, one RGB card canvas and compressed cards. Local measurements and production verification are recorded in `VALIDATION.md`.
+
+## Shared scheduler
+
+Production runs through Petit, which starts isolated systemd services. See
+[Petit operations](deploy/PETIT.md) for the worker, deployment, health and backup
+schedules. Rust CI runs on Linux and macOS before publishing a Linux executable.

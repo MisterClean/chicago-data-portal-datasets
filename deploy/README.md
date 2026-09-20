@@ -1,5 +1,9 @@
 # Lightsail production operations
 
+Scheduling has migrated to the shared Petit service. See [Petit operations](PETIT.md)
+for current schedules, health checks, backups, and rollback. The systemd timer
+configuration below describes the retained fallback only; leave both timers disabled.
+
 Ubuntu 24.04 amd64. The bot runs directly as a small Rust executable, alongside the existing bots. Builds happen on GitHub-hosted runners.
 
 ## Installed paths and ownership

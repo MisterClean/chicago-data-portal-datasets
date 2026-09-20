@@ -1,0 +1,8 @@
+polkit.addRule(function(action, subject) {
+    var units = ["chicago-data-bot.service", "chicago-data-bot-deploy.service", "chicago-data-bot-health.service", "chicago-data-bot-backup.service"];
+    if (action.id == "org.freedesktop.systemd1.manage-units" &&
+        subject.user == "ubuntu" && action.lookup("verb") == "start" &&
+        units.indexOf(action.lookup("unit")) >= 0) {
+        return polkit.Result.YES;
+    }
+});

@@ -1,5 +1,6 @@
 mod bluesky;
 mod catalog;
+mod operations;
 mod render;
 mod state;
 
@@ -27,6 +28,13 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Command {
+    /// Check an existing database without modifying it or contacting external services.
+    Check {
+        #[arg(long)]
+        health: bool,
+    },
+    /// Create a consistent verified backup, retaining seven copies.
+    Backup { output: PathBuf },
     /// Establish a baseline without posting. Run exactly once before scheduling.
     Init,
     /// Verify app-password authentication without posting.
@@ -62,6 +70,11 @@ fn main() -> Result<()> {
         Err(_) => anyhow::bail!("Could not load .env; check its permissions and syntax"),
     }
     let args = Args::parse();
+    match &args.command {
+        Command::Check { health } => return operations::check(&args.state, *health),
+        Command::Backup { output } => return operations::backup(&args.state, output),
+        _ => {}
+    }
     let client = client()?;
     if matches!(args.command, Command::AuthCheck) {
         bluesky::Session::login(client)?.verify();
@@ -134,7 +147,10 @@ fn main() -> Result<()> {
                 state::initialized(&db)?
             );
         }
-        Command::Preview { .. } | Command::AuthCheck => unreachable!(),
+        Command::Preview { .. }
+        | Command::AuthCheck
+        | Command::Check { .. }
+        | Command::Backup { .. } => unreachable!(),
     }
     Ok(())
 }

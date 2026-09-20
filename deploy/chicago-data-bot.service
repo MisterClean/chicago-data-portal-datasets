@@ -11,6 +11,7 @@ Group=chicago-data-bot
 StateDirectory=chicago-data-bot
 WorkingDirectory=/var/lib/chicago-data-bot
 EnvironmentFile=/etc/chicago-data-bot/.env
+ExecStartPre=/opt/chicago-data-bot/current/chicago-data-bot --state /var/lib/chicago-data-bot/catalog.sqlite check
 ExecStart=/opt/chicago-data-bot/current/chicago-data-bot --state /var/lib/chicago-data-bot/catalog.sqlite run --publish --max-posts 5
 TimeoutStartSec=15min
 MemoryMax=96M
