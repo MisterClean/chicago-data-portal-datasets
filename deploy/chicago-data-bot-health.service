@@ -16,6 +16,9 @@ Nice=10
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
+# SQLite read-only connections may need to create WAL coordination sidecars.
+# The Rust check still opens the database with SQLITE_OPEN_READ_ONLY.
+ReadWritePaths=/var/lib/chicago-data-bot
 ProtectHome=true
 ProtectKernelTunables=true
 ProtectControlGroups=true

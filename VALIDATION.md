@@ -46,3 +46,21 @@ A fresh release preview measured 0.69 seconds and 45,105,152 bytes maximum RSS (
 - Verified the updater user cannot read bot credentials and the runtime user cannot modify release binaries. Existing bots were not reconfigured or restarted. A pre-existing `divvy-bot-health.service` failure was observed and left untouched.
 
 The scheduled scan used `--publish` but had no new datasets, so it sent no announcement. Authentication and remote scanning/rendering are verified; the Rust write path remains covered by mock-server tests until the first new announcement. The earlier manually published browser test is unchanged.
+
+## Petit cutover — September 20, 2026
+
+- Rust 1.94.0 CI passed on Linux and macOS: 17 tests, format, Clippy and release builds.
+- Installed release e0ae2d9360c9619d6f13e0c9f463ed3eee3a25fd through the Petit deployment action.
+- Candidate passed an existing production database check before activation.
+- Worker, health and backup were triggered through Petit with a separate verification
+  history while the shared scheduler was stopped. Latest run of each completed successfully.
+- Health initially failed under a fully read-only filesystem because SQLite needed WAL
+  coordination sidecars; directory access was corrected while retaining a read-only SQL connection.
+- All ten shared job definitions validate, and the shared scheduler restarted successfully.
+  Both legacy bot timers are disabled. Existing other-bot job definitions were preserved.
+- Worker scanned 915 official datasets and queued zero announcements. Baseline and receipts
+  were preserved. No baseline reset or schema migration occurred.
+- A verified online backup was created; seven daily copies are retained. A separate
+  pre-cutover snapshot is held under the root-only production backup directory.
+- Petit CLI trigger's process exit alone does not establish task success in this installed
+  version; verification checks stored run status and systemd Result/ExecMainStatus as well.
