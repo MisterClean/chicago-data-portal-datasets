@@ -33,7 +33,7 @@ jobs:
           cp target/release/chicago-data-bot-updater dist/chicago-data-bot-updater-linux-amd64
           cd dist
           sha256sum chicago-data-bot-linux-amd64 chicago-data-bot-updater-linux-amd64 > SHA256SUMS
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: runner.os == 'Linux'
         with:
           name: linux-amd64
